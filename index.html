@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>두리번수학 — 집 안에서 수학을 찾아요</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+<!-- 시작 -->
+<section class="screen on" id="s-splash">
+  <div class="grow"></div>
+  <div class="center stack">
+    <div id="splash-pengu"></div>
+    <h1>두리번수학</h1>
+    <p class="muted" style="font-size:19px">집 안의 도형을 찍으면 마을이 커져요</p>
+  </div>
+  <div class="grow"></div>
+  <button class="btn" id="b-start">시작!</button>
+  <p class="center muted" style="font-size:13px;margin-top:14px">만 3~5세 · 프로토타입</p>
+</section>
+
+<!-- 누구세요 -->
+<section class="screen" id="s-who">
+  <h2 class="center">누구세요?</h2>
+  <div class="grow"></div>
+  <div class="stack">
+    <button class="choice" id="b-kid"><span class="big">🧒</span>나는 어린이!</button>
+    <button class="choice" id="b-parent"><span class="big">👨‍👩‍👧</span>부모님이에요</button>
+  </div>
+  <div class="grow"></div>
+</section>
+
+<!-- 부모 설정 -->
+<section class="screen" id="s-setup">
+  <h2>우리 아이 알려주세요</h2>
+  <p class="muted">세 가지만 답하면 첫 레벨을 정해요. 놀면서 자동으로 조정돼요.</p>
+  <div class="stack" style="margin-top:18px">
+    <div class="field"><label for="in-name">아이 이름</label><input id="in-name" maxlength="8" placeholder="예) 서현"></div>
+    <div class="field"><label>만 나이</label>
+      <div class="chips" id="age-chips">
+        <button class="chip" data-v="3">만 3세</button>
+        <button class="chip" data-v="4">만 4세</button>
+        <button class="chip" data-v="5">만 5세</button>
+      </div>
+    </div>
+    <div id="questions" class="stack"></div>
+    <div class="q" id="setup-ai">
+      <div class="qt">AI 판정 연결 <span class="tag">선택</span></div>
+      <p class="muted" style="font-size:14px">아이가 찍은 사진을 AI가 판정해요. 구글 계정으로 무료 키를 만들어 넣으면 이 기기에서 바로 돼요. 지금 안 넣으면 부모님이 대신 판정해요.</p>
+      <ol class="muted" style="font-size:14px;padding-left:18px;margin:10px 0">
+        <li>아래 버튼으로 Google AI Studio 열기 → 구글 로그인</li>
+        <li><b>Create API key</b> 누르기 (프로젝트는 아무거나)</li>
+        <li>나온 키(AIza…)를 복사해서 아래에 붙이기</li>
+      </ol>
+      <div class="row" style="margin-bottom:10px"><a class="btn quiet small" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="text-decoration:none">🔑 무료 키 만들기</a></div>
+      <input id="in-gkey-setup" type="password" autocomplete="off" placeholder="AIza… 붙여넣기" style="width:100%;min-height:48px;border-radius:14px;border:2px solid var(--line);padding:8px 12px;font:inherit;background:var(--card);color:var(--ink)">
+      <p class="muted" id="setup-ai-note" style="font-size:13px;margin-top:6px"></p>
+    </div>
+  </div>
+  <div style="margin-top:22px" class="stack">
+    <button class="btn coral" id="b-level">레벨 정하기</button>
+    <p class="center muted" id="setup-note" style="font-size:14px"></p>
+  </div>
+</section>
+
+<!-- 레벨 결과 -->
+<section class="screen" id="s-level">
+  <div class="grow"></div>
+  <div class="center stack">
+    <div style="font-size:80px;line-height:1" id="lv-icon">🌿</div>
+    <h2 id="lv-title">잎사귀 레벨</h2>
+    <p id="lv-reason" class="muted"></p>
+    <div class="chips" id="lv-focus" style="justify-content:center"></div>
+  </div>
+  <div class="grow"></div>
+  <button class="btn" id="b-to-village">마을로 가기</button>
+</section>
+
+<!-- 마을 -->
+<section class="screen" id="s-village">
+  <div class="row split">
+    <h2 id="v-title">마을</h2>
+    <span class="levelbadge" id="v-level">🌿 잎사귀</span>
+  </div>
+  <div class="village" style="margin-top:14px" id="village-wrap"></div>
+  <div class="row split" style="margin-top:14px">
+    <div class="starbar">⭐ <span id="v-stars">0</span></div>
+    <button class="iconbtn" id="b-parent-gate" aria-label="부모님 화면">👨‍👩‍👧</button>
+  </div>
+  <div class="pengu" style="margin-top:14px"><div id="v-pengu"></div><div class="bubble" id="v-say">빈 땅을 눌러봐!</div></div>
+</section>
+
+<!-- 미션 -->
+<section class="screen" id="s-mission">
+  <div class="row split">
+    <button class="iconbtn" id="b-m-back" aria-label="마을로">←</button>
+    <span class="counter" id="m-counter">0/3</span>
+    <button class="iconbtn" id="b-m-speak" aria-label="다시 듣기">🔊</button>
+  </div>
+  <div class="hero-emoji" id="m-emoji" style="margin-top:8px">🏠</div>
+  <h2 class="center" id="m-title">동그란 것을 찾아줘</h2>
+  <div class="dots" id="m-dots" style="margin-top:10px"></div>
+  <div class="pengu" style="margin-top:16px"><div id="m-pengu"></div><div class="bubble" id="m-say"></div></div>
+  <div class="hints" id="m-hints" style="margin-top:16px"></div>
+  <div class="grow"></div>
+  <button class="btn coral" id="b-shoot">📷 찍으러 가기</button>
+  <input type="file" id="file-in" class="vh" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+</section>
+
+<!-- 카메라 -->
+<section class="screen" id="s-camera">
+  <div class="row split">
+    <button class="iconbtn" id="b-cam-close" aria-label="닫기">✕</button>
+    <span class="counter" id="cam-title">동그라미</span>
+    <button class="iconbtn" id="b-cam-flip" aria-label="카메라 전환">🔄</button>
+  </div>
+  <div class="cam" style="margin-top:12px">
+    <video id="cam-video" autoplay playsinline muted></video>
+    <div class="guide"></div>
+    <div class="cap">가운데에 놓고 찍어줘!</div>
+  </div>
+  <div class="grow"></div>
+  <div class="row" style="justify-content:space-between;align-items:center">
+    <button class="iconbtn" id="b-cam-gallery" aria-label="갤러리">🖼️</button>
+    <button class="shutter" id="b-cam-shot" aria-label="찍기">📸</button>
+    <span style="width:52px"></span>
+  </div>
+</section>
+
+<!-- 미리보기 -->
+<section class="screen" id="s-preview">
+  <h3 class="center" id="p-title">이거 맞아?</h3>
+  <div class="preview" style="margin-top:12px"><img id="p-img" alt="찍은 사진"></div>
+  <div class="grow"></div>
+  <div class="stack">
+    <button class="btn" id="b-p-ok">이거야!</button>
+    <button class="btn quiet" id="b-p-retake">다시 찍기</button>
+  </div>
+</section>
+
+<!-- 판정 중 -->
+<section class="screen" id="s-judging">
+  <div class="grow"></div>
+  <div class="center stack">
+    <div id="j-pengu"></div>
+    <h2>펭펭이가 보고 있어…</h2>
+    <p class="muted"><span class="spin">🔍</span> 잠깐만!</p>
+  </div>
+  <div class="grow"></div>
+</section>
+
+<!-- 부모 판정 (AI 미연결) -->
+<section class="screen" id="s-manual">
+  <h3 class="center">부모님이 봐주세요</h3>
+  <p class="center muted" style="font-size:14px">AI 판정이 연결되지 않아 부모님이 대신 판정해요.</p>
+  <div class="preview" style="margin-top:12px"><img id="mn-img" alt="찍은 사진"></div>
+  <p class="center" style="margin-top:14px" id="mn-q">이 물건이 동그란 모양인가요?</p>
+  <div class="grow"></div>
+  <div class="row">
+    <button class="btn quiet" id="b-mn-no">다른 거 찾기</button>
+    <button class="btn" id="b-mn-yes">맞아요!</button>
+  </div>
+</section>
+
+<!-- 라운드 결과 -->
+<section class="screen" id="s-round">
+  <div class="grow"></div>
+  <div class="center stack">
+    <div class="confetti" id="r-emoji">✨</div>
+    <div class="bigword" id="r-word">시계 찾았다!</div>
+    <p id="r-sub" style="font-size:20px"></p>
+    <div class="materials" id="r-mats"></div>
+  </div>
+  <div class="grow"></div>
+  <div class="stack" id="r-actions"></div>
+</section>
+
+<!-- 건물 완성 -->
+<section class="screen" id="s-complete">
+  <div class="grow"></div>
+  <div class="center stack">
+    <div class="confetti">🎉</div>
+    <div class="bigword" id="c-word">우리 집 완성!</div>
+    <div id="c-svg" style="width:180px;margin:0 auto"></div>
+    <p style="font-size:22px;font-family:var(--display)">⭐ +<span id="c-stars">3</span></p>
+    <p class="muted" id="c-note"></p>
+  </div>
+  <div class="grow"></div>
+  <button class="btn" id="b-c-village">마을 보기</button>
+</section>
+
+<!-- 부모 게이트 -->
+<section class="screen" id="s-gate">
+  <div class="grow"></div>
+  <div class="center stack">
+    <h3>부모님 확인</h3>
+    <p class="muted">답을 골라주세요</p>
+    <div class="bigword" id="g-q">7 + 5 = ?</div>
+    <div class="gatekeys" id="g-keys"></div>
+  </div>
+  <div class="grow"></div>
+  <button class="textbtn" id="b-g-back">돌아가기</button>
+</section>
+
+<!-- 부모 화면 -->
+<section class="screen" id="s-parent">
+  <div class="row split">
+    <h2>부모님 화면</h2>
+    <button class="btn small quiet" id="b-pa-kid">어린이 화면</button>
+  </div>
+  <div class="stack" style="margin-top:14px">
+    <div class="card">
+      <div class="row split">
+        <div><h3 id="pa-name">아이</h3><p class="muted" id="pa-age">만 4세</p></div>
+        <span class="levelbadge" id="pa-level">🌿 잎사귀</span>
+      </div>
+      <p class="muted" style="font-size:14px;margin-top:10px">레벨은 미션 결과에 따라 자동 조정돼요. 직접 바꿀 수도 있어요.</p>
+      <div class="chips" id="pa-level-chips" style="margin-top:8px">
+        <button class="chip" data-v="하">🌱 새싹</button>
+        <button class="chip" data-v="중">🌿 잎사귀</button>
+        <button class="chip" data-v="상">🌳 큰나무</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stat">
+        <div><div class="n" id="pa-b">0/6</div><div class="l">완성한 건물</div></div>
+        <div><div class="n" id="pa-m">0</div><div class="l">완료한 미션</div></div>
+        <div><div class="n" id="pa-s">0</div><div class="l">모은 별</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>누리과정 자연탐구 경험</h3>
+      <p class="muted" style="font-size:14px;margin-top:4px">또래 비교가 아니라, 아이가 실제로 경험한 내용을 기록해요.</p>
+      <div id="pa-areas" class="stack" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
+      <h3>최근 활동</h3>
+      <div class="list" id="pa-log" style="margin-top:8px"></div>
+    </div>
+    <div class="plus">
+      <div class="row split"><h3>두리번수학 플러스</h3><span class="tag" style="background:rgba(255,255,255,.5);color:#26324F">얼리버드</span></div>
+      <div class="price" style="margin-top:6px">월 9,900원</div>
+      <ul>
+        <li>마을 6곳 전부 열기 (지금은 2곳 무료)</li>
+        <li>누리과정 영역별 상세 리포트</li>
+        <li>형제·자매 프로필 3명까지</li>
+        <li>초등 1~2학년 미션 (준비 중)</li>
+      </ul>
+      <button class="btn coral" style="margin-top:14px;min-height:56px;font-size:20px" id="b-sub">무료로 시작하기</button>
+    </div>
+    <div class="card">
+      <h3 style="font-size:18px">펭펭이 목소리</h3>
+      <p class="muted" style="font-size:14px;margin-top:4px">⭐ 표시가 더 자연스러운 음성이에요. 기기마다 목록이 달라요.</p>
+      <div class="field" style="margin-top:10px">
+        <label for="sel-voice">음성</label>
+        <select id="sel-voice" style="width:100%;min-height:48px;border-radius:14px;border:2px solid var(--line);padding:8px 12px;font:inherit;background:var(--card);color:var(--ink)"></select>
+      </div>
+      <div class="chips" id="voice-tone" style="margin-top:10px">
+        <button class="chip" data-v="calm">차분하게</button>
+        <button class="chip" data-v="friend">친구처럼</button>
+        <button class="chip" data-v="bright">밝게</button>
+        <button class="chip" data-v="off">소리 끄기</button>
+      </div>
+      <div class="row" style="margin-top:10px"><button class="btn quiet small" id="b-voice-test">🔊 들어보기</button></div>
+      <details style="margin-top:10px;font-size:13px" class="muted">
+        <summary>더 자연스러운 음성 받는 법</summary>
+        <p style="margin-top:6px"><b>아이폰</b>: 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 한국어 → <b>유나(향상됨)</b> 다운로드 후 이 화면 새로고침</p>
+        <p style="margin-top:6px"><b>안드로이드</b>: 설정 → 텍스트 음성 변환 → Google 음성 엔진 → 한국어 음성 데이터 설치</p>
+        <p style="margin-top:6px"><b>PC</b>: Microsoft Edge로 열면 '온라인(자연스러움)' 음성을 쓸 수 있어요</p>
+      </details>
+    </div>
+    <div class="card">
+      <h3 style="font-size:18px">AI 판정</h3>
+      <p class="muted" style="font-size:14px;margin-top:4px" id="pa-ai">확인 중…</p>
+      <div class="field" style="margin-top:12px">
+        <label for="in-gkey">Gemini API 키 (이 기기에만 저장돼요)</label>
+        <input id="in-gkey" type="password" autocomplete="off" placeholder="AIza…">
+      </div>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap">
+        <button class="btn quiet small" id="b-gkey-save">저장</button>
+        <a class="btn quiet small" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="text-decoration:none">🔑 무료 키 만들기</a>
+        <button class="textbtn" id="b-gkey-clear">키 지우기</button>
+      </div>
+      <p class="muted" style="font-size:12px;margin-top:8px">키는 이 기기에만 저장되고 다른 곳으로 보내지 않아요. 구글 무료 한도 안에서 쓰여요.</p>
+    </div>
+    <button class="textbtn" id="b-reset">데이터 초기화</button>
+  </div>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="missions.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
