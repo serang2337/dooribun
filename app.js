@@ -173,8 +173,8 @@ async function judgeWithAI(blob, m) {
 
 
 /* ============ Gemini 직접 호출 (임시) ============ */
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash'];
-function aiMode() { return (sampleFn && canImages) ? 'sample' : (S.geminiKey ? 'gemini' : 'manual'); }
+const GEMINI_MODELS = ['server'];
+function aiMode() { return (sampleFn && canImages) ? 'sample' : 'gemini'; }
 function aiStatusText() {
   if (sampleFn && canImages) return 'Claude 연결됨 — 사진을 AI가 판정해요';
   if (S.geminiKey) return 'Gemini 키 연결됨 — 사진을 AI가 판정해요';
@@ -190,7 +190,7 @@ async function geminiJSON(prompt, blob, schema) {
   let lastErr = null;
   for (const model of GEMINI_MODELS) {
     try {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.geminiKey)}`, {
+      const r = await fetch(`/api/gemini`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       if (r.status === 404) { lastErr = new Error('model'); continue; }
       if (r.status === 400 || r.status === 403) { const e = new Error('key'); e.code = 'bad_key'; throw e; }
